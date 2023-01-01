@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!-- 
+    Made by Saeid El-Saadi
+    Dec. 29, 2022
+    Notes:  -Project was made using self taught techniques (I learned all of this by myself and on my own time)
+            -Effeciency is NOT to be expected
+            -Not all cases are covered (I may have missed some)
+            -This is still being updated based on feedback
+            -Any tips to further imporve the code are always accepted (email is fine, which is found on my documents)
+            -Feel free to email me if you have any questions
+    
+    Project: Is supposed to be used to track the turns of players and enemies that are engaged in combat in the popular game Dungeons and Dragons.
+    The webpage is directed to dungeon masters who wish to replace the paper and pencil to track turns of players/enemies in combat within an online environment.
+
+    Includes:   -Text boxes to add players/enemies and their respected rolls
+                -A turn list that automatically sorts players/enemies respectively
+                -A current turn tracker to let the user know who is going next (or currently)
+                -A remove button to remove any mistakes made from the list
+-->
+<html>
+    <head>
+        <title>turns</title>
+        <style>
+            body {
+                margin-top: 20px;
+                margin-left: 20px;
+                padding: 0;
+                background: #1abc9c;
+            }
+
+            header {
+                font-size: 50px;
+                color: white;
+                font-style: Serif;
+            }
+
+            .text {
+                margin-top: 20px;
+                margin-left: 20px;
+                font-size: 30px;
+                color: white;
+                font-family: "Times New Roman", Times, serif;
+            }
+
+            #roll {
+                padding-right: 16px;
+            }
+
+            select {
+                width: 200px;
+                position: relative;
+                left: 500px
+            }
+
+            #turnCap {
+                margin-left: 500px;
+                font-size: 25px;
+                color: white;
+                font-family: "Times New Roman", Times, serif;
+            }
+
+            #curTurn {
+                color: rgb(255, 255, 255);
+                font-size: 25px;
+                font-family: "Times New Roman", Times, serif;
+            }
+
+            #remover {
+                margin-left: 500px;
+            }
+
+            fieldset {
+                display:inline;
+                border-color: rgb(0, 0, 0);
+                border-style: solid;
+            }
+
+            html {
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <header>D&D Turn list</header>
+        <br>
+        <p class="text">Adding players/enemies:</p>
+            <label for="player">Player:</label>
+            <input type="text" id="player" name="player"><br><br>
+            <label for="roll">Roll:  </label>
+            <input type="text" id="roll" name="roll"><br><br>
+            <button onclick="sorter()">Add</button><br>
+        <fieldset>
+            <legend>Current Turn</legend>
+            <p id="curTurn"></p>
+        </fieldset><br>
+        <button onclick="nextTurn()">Next player</button>
+        <p id="turnCap">Turn list:</p>
+        <div>
+            <select multiple size="20" id="turnList">
+            </select>
+            <button id="remover" onclick="removePlayer()">Remove</button>
+        </div>
+        <script>
+            function sorter() {
+                var a = document.getElementById('player');
+                var b = document.getElementById('roll');
+
+                var turn = document.getElementById('turnList');
+                var temp = document.createElement('option');
+
+                var index = -1;
+
+                temp.value = b.value;
+                temp.text = a.value +  '   (' + b.value + ')';
+
+                if (isNaN(b.value)) {
+                    alert("insert a number for rolls please");
+                    b.value = '';
+                    return false;
+                }
+
+                if (a.value === '' || b.value === '') {
+                    alert("fill in both boxes");
+                } else {
+                    if (turn.length === 0) {
+                        turn.add(temp);
+                    } else {
+                        for (var i = 0; i < turn.length; i++) {
+                            let k = turn[i];
+                            if (parseInt(temp.value) >= parseInt(k.value)) {
+                                index = i;
+                                break;
+                            }
+                        }
+
+                        turn.insertBefore(temp, turn[index]);
+                    }
+                }
+
+                a.value = '';
+                b.value = '';
+                return true;
+            }
+
+            function nextTurn() {
+                var turn = document.getElementById('turnList');
+                var cur = document.getElementById('curTurn');
+
+                if (turn.length === 0) {
+                    cur.innerHTML = "";
+                } else if (cur.innerHTML === "") {
+                    cur.innerHTML = turn[0].text;
+                } else {
+                    for (var i = 0; i < turn.length; i++) {
+                        if (i === turn.length - 1) {
+                            cur.innerHTML = turn[0].text;
+                        } else if (turn[i].text === cur.innerHTML) {
+                            cur.innerHTML = turn[i + 1].text;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            function removePlayer() {
+                var turn = document.getElementById('turnList');
+                var cur = document.getElementById('curTurn');
+
+                turn.remove(turn.selectedIndex);
+                cur.innerHTML = "";
+            }
+        </script>
+    </body>
+</html>
